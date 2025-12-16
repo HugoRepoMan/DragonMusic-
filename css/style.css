@@ -25,7 +25,20 @@
             box-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
         
-        .lane { width: 25%; height: 100%; border-right: 1px solid rgba(255,255,255,0.1); position: relative; }
+        .lane { width: 25%; height: 100%; border-right: 1px solid rgba(255,255,255,0.1); position: relative !important;}
+        .key-label {
+    position: absolute;
+    bottom: 5px;        /* Pegado al fondo */
+    top: auto;          /* IMPORTANTE: Evita que se vaya arriba */
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    z-index: 5;
+    pointer-events: none;
+}
         .key-hint { position: absolute; bottom: 5px; width: 100%; text-align: center; font-size: 24px; font-weight: bold; color: #666; text-shadow: 1px 1px 0 #000; }
         
         .hit-zone { 
@@ -161,33 +174,196 @@
         }
         /* Menu de Pausa */
         #pause-menu {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 200;
-            justify-content: center; align-items: center; display: flex;
+            display: none; /* Empezamos ocultos */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 200; /* Encima del juego, debajo de resultados */
+            
         }
+
         .pause-content {
-            background: #222; padding: 40px; border: 2px solid #00d2ff; 
-            border-radius: 10px; width: 300px; text-align: center;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+            background: #111;
+            padding: 20px;
+            border: 2px solid #00d2ff;
+            border-radius: 10px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
+
+            /* TRUCO DE CENTRADO (Reemplaza a flexbox) */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         /* Pantalla de Resultados */
         #results-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 300;
-            display: flex; justify-content: center; align-items: center;
+            display: none; /* Solo dejamos esta orden para que empiece oculto */
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.95); 
+            z-index: 300;
+            
+            /* Para centrar el contenido (flexbox) lo activaremos con JS o usamos una clase auxiliar, 
+            pero por ahora quita el 'display: flex' de aquí para que no estorbe */
+            justify-content: center; 
+            align-items: center;
         }
+
         .results-content {
-            background: #1a1a1a; padding: 30px; border: 2px solid gold; 
-            border-radius: 15px; width: 400px; text-align: center;
+            background: #1a1a1a; 
+            padding: 30px; 
+            border: 2px solid gold; 
+            border-radius: 15px; 
+            width: 400px; 
+            text-align: center;
             box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+            
+            /* Truco para centrar si no usamos flex en el padre: */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
+
+        /* --- ESTILO DEL BOTÓN DE AJUSTES --- */
+        .neon-btn-small {
+            /* POSICIÓN FIJA: Ignora a los padres y se pega a la ventana */
+            position: fixed; 
+            top: 20px;
+            right: 20px;
+            z-index: 1000; /* Asegura que esté encima de todo */
+            
+            /* TAMAÑO: Evita que se estire */
+            width: auto; 
+            display: inline-block;
+            
+            /* ESTÉTICA */
+            background-color: transparent;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            font-size: 12px; /* Letra más pequeña */
+            text-transform: uppercase;
+            
+            border: 2px solid #ff0055;
+            border-radius: 30px;
+            padding: 8px 15px; /* Botón más compacto */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .neon-btn-small:hover {
+            background-color: #ff0055;
+            box-shadow: 0 0 15px #ff0055;
+            transform: scale(1.05);
+        }
+
+        /* --- ESTILO DE LA VENTANA MODAL (EL MENÚ NEGRO) --- */
+        #settings-modal {
+            display: none; /* Se maneja con JS */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95); /* Fondo casi negro */
+            z-index: 200;
+            color: white;
+            
+            /* Centrado Flexbox perfecto */
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Contenedor interno para darle borde al menú */
+        .modal-content {
+            background: #111;
+            border: 2px solid #ff0055;
+            border-radius: 15px;
+            padding: 40px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 0 50px rgba(255, 0, 85, 0.2);
+            text-align: center;
+        }
+
+        /* Títulos del menú */
+        #settings-modal h2, #settings-modal h3 {
+            color: #ff0055;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+        }
+
+        /* Inputs de las teclas */
+        .key-input {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            
+            background: #222;
+            color: white;
+            border: 2px solid #444;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+
+        .key-input:focus, .key-input:hover {
+            border-color: #ff0055;
+            background: #333;
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+        }
+
+        /* Slider de volumen */
+        input[type=range] {
+            accent-color: #ff0055; /* Pinta el slider de rosa */
+            cursor: pointer;
+        }
+
+        /* Botón cerrar dentro del modal */
+        #btn-close-settings {
+            margin-top: 30px;
+            background: #ff0055;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #btn-close-settings:hover {
+            transform: scale(1.1);
+            background: white;
+            color: #ff0055;
+        }
+
         .stats-box { border-bottom: 1px solid #444; margin-bottom: 20px; padding-bottom: 10px; }
         .leaderboard-box { background: #111; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: left; }
         #high-scores-list { list-style: none; padding: 0; margin: 0; font-size: 0.9em; }
         #high-scores-list li { 
             padding: 5px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; 
         }
-        #high-scores-list li:nth-child(1) { color: gold; font-weight: bold; } 
+        #high-scores-list li:nth-child(1) { color: gold; font-weight: bold; }
 
         @media (max-width: 600px) {
             .key-hint { font-size: 14px; bottom: 2px; }
