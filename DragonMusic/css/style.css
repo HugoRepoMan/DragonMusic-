@@ -1,0 +1,416 @@
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh; 
+            overflow: hidden; 
+            position: fixed;
+        }
+        body { font-family: 'Arial', sans-serif; background: #111; color: white; margin: 0; overflow: hidden; }
+        
+        #bg-video { position: fixed; top: 0; left: 0; min-width: 100%; min-height: 100%; z-index: -1; object-fit: cover; opacity: 0.4; transition: opacity 1s; }
+        #game-interface { display: none; height: 100vh; position: relative; }
+        #game-container { 
+            width: 95%; 
+            max-width: 500px;
+            height: 75vh; 
+            max-height: 800px; 
+            background: rgba(0,0,0,0.85); 
+            margin: 10px auto 0 auto; 
+            position: relative; 
+            border: 4px solid #555; 
+            display: flex; 
+            justify-content: space-around; 
+            overflow: hidden; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+        
+        .lane { width: 25%; height: 100%; border-right: 1px solid rgba(255,255,255,0.1); position: relative !important;}
+        .key-label {
+    position: absolute;
+    bottom: 5px;        /* Pegado al fondo */
+    top: auto;          /* IMPORTANTE: Evita que se vaya arriba */
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    z-index: 5;
+    pointer-events: none;
+}
+        .key-hint { position: absolute; bottom: 5px; width: 100%; text-align: center; font-size: 24px; font-weight: bold; color: #666; text-shadow: 1px 1px 0 #000; }
+        
+        .hit-zone { 
+            position: absolute; bottom: 60px; width: 100%; height: 30px; 
+            background: rgba(255,255,255,0.1); border-top: 2px solid #aaa; border-bottom: 2px solid #aaa;
+            transition: background 0.1s;
+        }
+        .active-hit { background: rgba(255, 255, 255, 0.6) !important; box-shadow: 0 0 15px white; }
+
+        .note { 
+            width: 90%; height: 30px; background: #00d2ff; border-radius: 8px; 
+            position: absolute; top: -50px; left: 5%; 
+            box-shadow: 0 0 10px #00d2ff; z-index: 5;
+        }
+
+        #feedback { 
+            position: absolute; top: 30%; left: 0; right: 0; 
+            text-align: center; font-size: 3em; font-weight: bold; 
+            opacity: 0; z-index: 20; pointer-events: none;
+            text-shadow: 0 0 10px #000;
+        }
+        .perfect { color: #00ff00; text-shadow: 0 0 20px #00ff00; }
+        .good { color: #ffff00; }
+        .miss { color: #ff0000; }
+        
+        .power-bar-container { width: 300px; height: 15px; background: #333; margin: 10px auto; border-radius: 10px; overflow: hidden; border: 1px solid #555; }
+        .power-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #ffae00, #ffdd00); transition: width 0.2s; }
+        .power-mode { border-color: gold !important; box-shadow: 0 0 50px gold !important; }
+
+        /* Pantalla de Inicio */
+        #start-screen { 
+            position: absolute; 
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); 
+            background: rgba(20,20,20,0.95); 
+            padding: 20px; 
+            border-radius: 15px; 
+            border: 2px solid #ff0055; 
+            text-align: center; 
+            width: 90%;       
+            max-width: 400px; 
+            box-sizing: border-box; 
+            z-index: 100;
+            max-height: 100vh; 
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        select, input[type=text] { 
+            width: 100%; 
+            padding: 12px; 
+            margin: 10px 0; 
+            background: #333; 
+            color: white; 
+            border: 1px solid #555; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+        }
+        button { 
+        
+            font-size: 1.2em; 
+            background: #ff0055; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            border-radius: 50px; 
+            font-weight: bold; 
+            transition: transform 0.1s;
+            width: 100%;             
+            padding: 15px 0;         
+            display: block;         
+            box-sizing: border-box;  
+        }
+        button:active { transform: scale(0.95); }
+       
+        /* Panel de dificultad*/
+        .doom-panel {
+            background: #000;
+            border: 2px solid #555;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .doom-face-container {
+            width: 80px;
+            height: 100px; 
+            margin: 0 auto 10px auto;
+            border: 3px solid #333;
+            background: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .doom-face-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+        }
+
+        .doom-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .doom-btn {
+            background: #ff0055;
+            color: white;
+            border: none;
+            font-size: 1.2em;
+            padding: 5px 15px;
+            cursor: pointer;
+            margin: 0 !important; 
+            border-radius: 3px;
+        }
+
+        .doom-btn:hover {
+            background: #ff4488;
+        }
+
+        .doom-info {
+            width: 100%;
+            padding: 0 10px;
+        }
+        /* Menu de Pausa */
+        #pause-menu {
+            display: none; /* Empezamos ocultos */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 200; /* Encima del juego, debajo de resultados */
+            
+        }
+
+        .pause-content {
+            background: #111;
+            padding: 20px;
+            border: 2px solid #00d2ff;
+            border-radius: 10px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
+
+            /* TRUCO DE CENTRADO (Reemplaza a flexbox) */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* Pantalla de Resultados */
+        #results-screen {
+            display: none; /* Solo dejamos esta orden para que empiece oculto */
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.95); 
+            z-index: 300;
+            
+            /* Para centrar el contenido (flexbox) lo activaremos con JS o usamos una clase auxiliar, 
+            pero por ahora quita el 'display: flex' de aquí para que no estorbe */
+            justify-content: center; 
+            align-items: center;
+        }
+
+        .results-content {
+            background: #1a1a1a; 
+            padding: 30px; 
+            border: 2px solid gold; 
+            border-radius: 15px; 
+            width: 400px; 
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+            
+            /* Truco para centrar si no usamos flex en el padre: */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* --- ESTILO DEL BOTÓN DE AJUSTES --- */
+        .neon-btn-small {
+            /* POSICIÓN FIJA: Ignora a los padres y se pega a la ventana */
+            position: fixed; 
+            top: 20px;
+            right: 20px;
+            z-index: 1000; /* Asegura que esté encima de todo */
+            
+            /* TAMAÑO: Evita que se estire */
+            width: auto; 
+            display: inline-block;
+            
+            /* ESTÉTICA */
+            background-color: transparent;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            font-size: 12px; /* Letra más pequeña */
+            text-transform: uppercase;
+            
+            border: 2px solid #ff0055;
+            border-radius: 30px;
+            padding: 8px 15px; /* Botón más compacto */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .neon-btn-small:hover {
+            background-color: #ff0055;
+            box-shadow: 0 0 15px #ff0055;
+            transform: scale(1.05);
+        }
+
+        /* --- ESTILO DE LA VENTANA MODAL (EL MENÚ NEGRO) --- */
+        #settings-modal {
+            display: none; /* Se maneja con JS */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.95); /* Fondo casi negro */
+            z-index: 200;
+            color: white;
+            
+            /* Centrado Flexbox perfecto */
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Contenedor interno para darle borde al menú */
+        .modal-content {
+            background: #111;
+            border: 2px solid #ff0055;
+            border-radius: 15px;
+            padding: 40px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 0 50px rgba(255, 0, 85, 0.2);
+            text-align: center;
+        }
+
+        /* Títulos del menú */
+        #settings-modal h2, #settings-modal h3 {
+            color: #ff0055;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+        }
+
+        /* Inputs de las teclas */
+        .key-input {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            
+            background: #222;
+            color: white;
+            border: 2px solid #444;
+            border-radius: 10px;
+            transition: 0.2s;
+        }
+
+        .key-input:focus, .key-input:hover {
+            border-color: #ff0055;
+            background: #333;
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);
+        }
+
+        /* Slider de volumen */
+        input[type=range] {
+            accent-color: #ff0055; /* Pinta el slider de rosa */
+            cursor: pointer;
+        }
+
+        /* Botón cerrar dentro del modal */
+        #btn-close-settings {
+            margin-top: 30px;
+            background: #ff0055;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #btn-close-settings:hover {
+            transform: scale(1.1);
+            background: white;
+            color: #ff0055;
+        }
+
+        .stats-box { border-bottom: 1px solid #444; margin-bottom: 20px; padding-bottom: 10px; }
+        .leaderboard-box { background: #111; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: left; }
+        #high-scores-list { list-style: none; padding: 0; margin: 0; font-size: 0.9em; }
+        #high-scores-list li { 
+            padding: 5px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; 
+        }
+        #high-scores-list li:nth-child(1) { color: gold; font-weight: bold; }
+
+        @media (max-width: 600px) {
+            .key-hint { font-size: 14px; bottom: 2px; }
+            .btn-style { width: 95%; padding: 15px; }
+            .hit-zone { bottom: 10%; height: 5%; }
+        }
+        /* --- Responsividad --- */
+        @media (max-width: 480px) {
+            #start-screen {
+                padding: 15px;
+                border-width: 1px;
+            }
+            h1 { font-size: 1.5em; margin-bottom: 5px; }
+            .doom-panel { padding: 5px; margin: 10px 0; }
+            .doom-face-container { width: 60px; height: 75px; } 
+            #diff-title { font-size: 0.9em; }
+            .doom-btn { padding: 5px 10px; }
+            select, input[type=text] { padding: 8px; font-size: 0.9em; }
+            .btn-style { font-size: 1em; padding: 10px 0; }
+        }
+        @media (max-height: 500px) {
+            #start-screen {
+                top: 0; left: 0; transform: none;
+                width: 100%; height: 100%; max-width: none; max-height: none;
+                border-radius: 0; border: none;
+                overflow-y: scroll; 
+            }
+        }
+        @media (max-height: 700px) {
+            #start-screen {
+                padding: 10px;
+                border-width: 1px;
+            }
+            h1 { font-size: 1.5em; margin: 5px 0; }
+            p { margin: 5px 0; font-size: 0.8em; }
+            select, input[type=text] { 
+                padding: 5px; 
+                margin: 5px 0; 
+                height: 35px; 
+            }
+            .doom-panel { margin: 5px 0; padding: 5px; }
+            .doom-face-container { height: 60px; width: 50px; margin-bottom: 5px; }
+            .doom-controls h4 { font-size: 0.9em; }
+            .doom-btn { padding: 2px 10px; }
+            .btn-style { 
+                margin-top: 10px; 
+                padding: 10px 0; 
+                font-size: 1em; 
+            }
+        }
