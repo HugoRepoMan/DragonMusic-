@@ -20,7 +20,7 @@ Tecnologías que se han utilizado
 - **Gestión de BD:** phpMyAdmin  
 - **Servidor local:** XAMPP
 
-Media para el guardado de las cancones
+Media para el guardado de las cancines
   https://drive.google.com/drive/folders/15zjYxA7P8l5oSvc-_WHfNMCtM0m5cZK0
 
 Ejecución del proyecto desde XAMPP
@@ -61,9 +61,8 @@ Ejecutar el proyecto
     - Acceder al juego
 
 Notas finales
-Este proyecto fue desarrollado con fines **educativos**.
+El proyecto fue desarrollado con fines **educativos**.
 Se recomienda ejecutar el sistema únicamente en **entorno local**.
-
 
 Autores
 
@@ -76,5 +75,5 @@ Como parte de una práctica educativo de base de datos, programación y desarrol
 
 ---
 
-© Dragon Music – Proyecto 
+© Dragon Music – Proyect
 
